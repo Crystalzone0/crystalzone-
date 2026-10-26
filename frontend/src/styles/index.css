@@ -1,0 +1,282 @@
+@import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  
+    html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    background-color: #111111; /* dark behind the page: no white flash when the mobile browser bounces past the end */
+  }
+
+  body {
+    @apply bg-cream font-sans text-charcoal antialiased;
+    /* Safety net against accidental sideways scrolling. Unlike "hidden", "clip" keeps sticky headers working. */
+    overflow-x: clip;
+     min-height: 100vh;
+    min-height: 100dvh;
+  }
+  
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif text-ink;
+    text-wrap: balance; /* no single orphan word on the last line of a heading */
+  }
+  h1,
+  h2 {
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  h3,
+  h4 {
+    font-weight: 600; /* the serif is thin at small sizes, so card titles get more weight */
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: #c6a15b;
+    color: #111111;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-gold-dark ring-offset-2 ring-offset-cream;
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-0 ring-offset-0;
+  }
+  img {
+    @apply max-w-full;
+  }
+}
+
+@layer components {
+  .container-cz {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* One button language everywhere: soft colour and shadow transitions, a light press, nothing bouncy. */
+  .btn {
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-medium tracking-wide transition-[background-color,border-color,color,box-shadow,transform,opacity] duration-300 ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-gold {
+    @apply btn bg-gold text-ink hover:bg-gold-light hover:shadow-[0_8px_22px_-10px_rgba(198,161,91,0.9)];
+  }
+  .btn-dark {
+    @apply btn bg-ink text-white hover:bg-charcoal hover:shadow-soft;
+  }
+  .btn-outline {
+    @apply btn border border-charcoal/30 text-charcoal hover:border-gold hover:text-gold-dark;
+  }
+  .btn-ghost {
+    @apply btn text-charcoal hover:bg-charcoal/5;
+  }
+  /* Declared after the variants so sizes always win over the base padding. */
+  .btn-sm {
+    @apply min-h-[2.25rem] px-5 py-2 text-xs;
+  }
+  .btn-lg {
+    @apply min-h-[3.25rem] px-9 py-4 text-base;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-charcoal;
+  }
+  .field-error {
+    @apply mt-1.5 text-xs text-red-600;
+  }
+  /* Field borders need 3:1 contrast to be recognisable as a control. */
+  .input {
+    @apply w-full rounded-xl border border-charcoal/50 bg-white px-4 py-3 text-sm outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted focus:border-gold focus:ring-2 focus:ring-gold/30;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden rounded-xl bg-cream-dark;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent;
+    animation: shimmer 1.4s infinite;
+  }
+}
+
+/* Defined here (not only in tailwind.config.js) because Tailwind emits keyframes only for animate-* utilities. */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toast-out {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Muted text. Placed after the utilities (same specificity, later wins) so small helper text written as
+   text-charcoal/50 and /60 stays readable: about 4.9:1 on ivory. Your muted tone #77736B is available as text-muted. */
+.text-charcoal\/50,
+.text-charcoal\/60 {
+  color: rgb(34 34 34 / 0.66);
+}
+
+/* Scroll reveal for store sections, with no JavaScript. Browsers that support scroll-driven animations (Chrome, Edge,
+   Safari) fade each section in as it arrives; Firefox simply shows everything (headings still reveal via Reveal.jsx).
+   The animation ends in "transform: none", so it can never trap fixed-position children. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    #main section {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+/* Product page, phones: the sticky "Add to cart" bar moves the WhatsApp button up and keeps the footer readable. */
+.wa-fab {
+  transition: bottom 0.25s ease;
+}
+@media (max-width: 1023px) {
+  html[data-sticky-bar] .wa-fab {
+    bottom: 5.25rem;
+  }
+  html[data-sticky-bar] footer {
+    padding-bottom: 4.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Printing orders and receipts: only the content, no site chrome, buttons or shadows. */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  header,
+  footer,
+  aside.fixed,
+  .wa-fab,
+  .no-print,
+  a[class*='btn-'],
+  button[class*='btn-'] {
+    display: none !important;
+  }
+  [class*='lg:pl-64'] {
+    padding-left: 0 !important;
+  }
+  * {
+    box-shadow: none !important;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  li,
+  section,
+  [class*='rounded-3xl'] {
+    break-inside: avoid;
+  }
+}
+/* Home hero: shorter on phones */
+@media (max-width: 639px) {
+  #main > div > section:first-child {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+}
+/* Hero diamond: glow, a slow float, a soft light sweep and a twinkling flare. */
+.cz-hero-art {
+  filter: drop-shadow(0 12px 28px rgba(198, 161, 91, 0.3));
+}
+.cz-hero-diamond {
+  animation: cz-float 8s ease-in-out infinite;
+}
+.cz-hero-shine {
+  animation: cz-shine 7s ease-in-out infinite;
+}
+.cz-hero-flare {
+  animation: cz-twinkle 5s ease-in-out infinite;
+}
+@keyframes cz-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes cz-shine {
+  0%,
+  45% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(560px);
+  }
+}
+@keyframes cz-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cz-hero-diamond,
+  .cz-hero-shine,
+  .cz-hero-flare {
+    animation: none !important;
+  }
+  .cz-hero-shine {
+    display: none;
+  }
+}

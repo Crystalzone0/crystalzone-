@@ -1,0 +1,27 @@
+{
+  "name": "crystal-zone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Crystal Zone (CZ) - Artificial Jewellery & Fashion Accessories e-commerce store",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c yellow,cyan \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "dev:api": "npm run dev -w backend",
+    "dev:web": "npm run dev -w frontend",
+    "build": "npm run build -w frontend",
+    "start": "npm run start -w backend",
+    "seed": "npm run seed -w backend",
+    "seed:destroy": "npm run seed:destroy -w backend",
+    "create-admin": "npm run create-admin -w backend",
+    "test": "npm run test -w backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
